@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Food Order</title>
+        <script src="vue.js"></script>
+    </head>
+    <body>
+        <div id="app">
+           <label>ผู้สั่ง</label>
+           <input type="text" v-model="name"></input>
+           <label>รายการอาหาร</label>
+           <input type="text" v-model="orderName"></input>
+           <label>ราคา</label>
+           <input type="text" v-model="price"></input>
+           <button v-on:click="addOrder">Order!!</button>
+
+           <!-- list all orders -->
+           <table style="width: 100%">
+            <tr>
+                <td>ผู้สั่ง</td>
+                <td>รายการอาหาร</td>
+                <td>ราคา</td>
+                <td>จ่าย</td>
+            </tr>
+            <tr v-for="order in orders">
+                <td>{{ order.name}}</td>
+                <td>{{ order.orderName}}</td>
+                <td>{{ order.price}}</td>
+                <td>{{ order.pay}}</td>
+            </tr>
+           </table>
+
+           <p>ราคารวม : {{ priceSummary }}</p>
+
+           <!-- สำหรับใส่ส่วนลด -->
+           <input type="text" v-model="discount"></input> 
+           <button v-on:click="calcPayment">Calculate</button>
+        </div>
+        <script>
+            new Vue({
+                el: '#app',
+                data: {
+                   name: '',
+                   orderName: '',
+                   price: 0,
+                   orders: [],
+                  discount: 0
+                },
+                computed: {
+                    priceSummary() {
+                        return this.orders.reduce((sum, cur) => sum + parseInt(cur.price), 0);
+                    }
+                },
+                methods: {
+                    addOrder() {
+                        const newOrder = {name: this.name, orderName: this.orderName, price: this.price, pay: 0};
+                        this.orders.push(newOrder);
+                        this.name = '';
+                        this.orderName = '';
+                        this.price = 0;
+                    },
+                    calcPayment() {
+                        this.orders.map(r => {
+                            const payment = r.price - (this.discount / this.orders.length);
+                            r.pay = payment;
+                        })
+                    }
+                }
+            })
+        </script>
+    </body>
+</html>
